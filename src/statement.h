@@ -44,16 +44,18 @@ namespace statement {
         return result;
     }
 
+    std::string Format(int amount) {
+        std::stringstream ss;
+        ss.imbue(std::locale("en_US.UTF-8"));
+        ss << "$" << std::fixed << std::setprecision(2) << amount;  // $1,234.56
+        return ss.str();
+    }
+
     std::string Statement(const Invoice &invoice, const Plays &plays) {
         int total_amount = 0;
         int volume_credits = 0;
         std::string result = "Statement for " + invoice.GetCustomer() + "\n";
-        auto format = [](int amount) {
-            std::stringstream ss;
-            ss.imbue(std::locale("en_US.UTF-8"));
-            ss << "$" << std::fixed << std::setprecision(2) << amount;  // $1,234.56
-            return ss.str();
-        };
+        auto format = Format;
 
         for (const auto& perf: invoice.GetPerformances()) {
             volume_credits += volumeCreditsFor(plays, perf);
