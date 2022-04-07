@@ -67,7 +67,11 @@ namespace statement {
         return total_amount;
     }
 
-    std::string RenderPlainText(const Invoice &invoice, const Plays &plays) {
+    struct StatementData {
+
+    };
+
+    std::string RenderPlainText(const Invoice &invoice, const Plays &plays, const StatementData data) {
         std::string result = "Statement for " + invoice.GetCustomer() + "\n";
 
         for (const auto& perf: invoice.GetPerformances()) {
@@ -83,7 +87,8 @@ namespace statement {
     }
 
     std::string Statement(const Invoice &invoice, const Plays &plays) {
-        return RenderPlainText(invoice, plays);
+        StatementData statement_data;
+        return RenderPlainText(invoice, plays, statement_data);
     }
 }
 
