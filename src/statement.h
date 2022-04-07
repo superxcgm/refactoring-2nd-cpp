@@ -115,13 +115,17 @@ namespace statement {
         return enriched_performances;
     }
 
-    std::string Statement(const Invoice &invoice, const Plays &plays) {
+    StatementData CreateStatementData(const Invoice &invoice, const Plays &plays) {
         StatementData statement_data;
         statement_data.customer = invoice.GetCustomer();
         statement_data.performances = EnrichPerformances(invoice, plays);
         statement_data.total_amount = TotalAmount(statement_data.performances, plays);
         statement_data.total_volume_credit = TotalVolumeCredits(statement_data.performances, plays);
-        return RenderPlainText(plays, statement_data);
+        return statement_data;
+    }
+
+    std::string Statement(const Invoice &invoice, const Plays &plays) {
+        return RenderPlainText(plays, CreateStatementData(invoice, plays));
     }
 }
 
