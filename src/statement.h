@@ -15,7 +15,15 @@ namespace statement {
     using Plays = std::map<PlayID, Play>;
 
     class EnrichedPerformance : public Performance {
+        Play play;
+    public:
+        EnrichedPerformance(const Performance &perf, const Play &play) : Performance(perf.GetPlayId(),
+                                                                                     perf.GetAudience()),
+                                                                         play(play) {}
 
+        const Play &GetPlay() const {
+            return play;
+        }
     };
 
     int AmountFor(const Performance &perf, const Play &play) {
@@ -41,10 +49,9 @@ namespace statement {
 
     const Play &PlayFor(const Plays &plays, const Performance &perf) { return plays.at(perf.GetPlayId()); }
 
-    int volumeCreditsFor(const Plays &plays, const Performance &perf) {
+    int volumeCreditsFor(const Plays &plays, const EnrichedPerformance &perf) {
         int result = std::max(perf.GetAudience() - 30, 0);
-        if (Play::PlayType::COMEDY == PlayFor(plays,
-                                              perf).GetType())
+        if (Play::PlayType::COMEDY == perf.GetPlay().GetType())
             result += floor(perf.GetAudience() / 5);
         return result;
     }
@@ -67,12 +74,10 @@ namespace statement {
     int TotalAmount(const std::vector<statement::EnrichedPerformance> &performances, const Plays &plays) {
         int total_amount = 0;
         for (const auto &perf: performances) {
-            total_amount += AmountFor(perf, PlayFor(plays, perf));
+            total_amount += AmountFor(perf, perf.GetPlay());
         }
         return total_amount;
     }
-
-
 
     struct StatementData {
         std::string customer;
@@ -84,8 +89,8 @@ namespace statement {
 
         for (const auto &perf: data.performances) {
             // print line for this order
-            result += "  " + PlayFor(plays, perf).GetName() + ": " + Usd(
-                    AmountFor(perf, PlayFor(plays, perf))) + " (" +
+            result += "  " + perf.GetPlay().GetName() + ": " + Usd(
+                    AmountFor(perf, perf.GetPlay())) + " (" +
                       std::to_string(perf.GetAudience()) + " seats)\n";
         }
 
@@ -94,12 +99,12 @@ namespace statement {
         return result;
     }
 
-    std::vector<EnrichedPerformance> EnrichPerformances(const Invoice &invoice) {
+    std::vector<EnrichedPerformance> EnrichPerformances(const Invoice &invoice, const Plays &plays) {
         auto origin_performances = invoice.GetPerformances();
         std::vector<EnrichedPerformance> enriched_performances;
         enriched_performances.reserve(origin_performances.size());
         for (const auto &perf: origin_performances) {
-            EnrichedPerformance enriched_performance{perf};
+            EnrichedPerformance enriched_performance{perf, PlayFor(plays, perf)};
             enriched_performances.push_back(enriched_performance);
         }
         return enriched_performances;
@@ -108,7 +113,7 @@ namespace statement {
     std::string Statement(const Invoice &invoice, const Plays &plays) {
         StatementData statement_data;
         statement_data.customer = invoice.GetCustomer();
-        statement_data.performances = EnrichPerformances(invoice);
+        statement_data.performances = EnrichPerformances(invoice, plays);
         return RenderPlainText(invoice, plays, statement_data);
     }
 }
