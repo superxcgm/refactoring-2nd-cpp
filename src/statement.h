@@ -77,9 +77,7 @@ namespace statement {
                       std::to_string(perf.GetAudience()) + " seats)\n";
         }
 
-        int total_amount = TotalAmount(invoice, plays);
-
-        result += "Amount owed is " + Usd(total_amount) + "\n";
+        result += "Amount owed is " + Usd(TotalAmount(invoice, plays)) + "\n";
         result += "You earned " + std::to_string(TotalVolumeCredits(invoice, plays)) + " credits\n";
         return result;
     }
