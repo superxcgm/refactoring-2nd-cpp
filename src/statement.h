@@ -14,6 +14,10 @@ namespace statement {
     using PlayID = std::string;
     using Plays = std::map<PlayID, Play>;
 
+    class EnrichedPerformance : public Performance {
+
+    };
+
     int AmountFor(const Performance &perf, const Play &play) {
         int result = 0;
 
@@ -52,25 +56,23 @@ namespace statement {
         return ss.str();
     }
 
-    int TotalVolumeCredits(const Invoice &invoice, const Plays &plays) {
+    int TotalVolumeCredits(const std::vector<EnrichedPerformance> &performances, const Plays &plays) {
         int result = 0;
-        for (const auto &perf: invoice.GetPerformances()) {
+        for (const auto &perf: performances) {
             result += volumeCreditsFor(plays, perf);
         }
         return result;
     }
 
-    int TotalAmount(const Invoice &invoice, const Plays &plays) {
+    int TotalAmount(const std::vector<statement::EnrichedPerformance> &performances, const Plays &plays) {
         int total_amount = 0;
-        for (const auto &perf: invoice.GetPerformances()) {
+        for (const auto &perf: performances) {
             total_amount += AmountFor(perf, PlayFor(plays, perf));
         }
         return total_amount;
     }
 
-    class EnrichedPerformance : public Performance {
 
-    };
 
     struct StatementData {
         std::string customer;
@@ -87,8 +89,8 @@ namespace statement {
                       std::to_string(perf.GetAudience()) + " seats)\n";
         }
 
-        result += "Amount owed is " + Usd(TotalAmount(invoice, plays)) + "\n";
-        result += "You earned " + std::to_string(TotalVolumeCredits(invoice, plays)) + " credits\n";
+        result += "Amount owed is " + Usd(TotalAmount(data.performances, plays)) + "\n";
+        result += "You earned " + std::to_string(TotalVolumeCredits(data.performances, plays)) + " credits\n";
         return result;
     }
 
