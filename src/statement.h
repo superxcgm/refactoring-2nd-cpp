@@ -35,6 +35,8 @@ namespace statement {
         return result;
     }
 
+    const Play &PlayFor(const Plays &plays, const Performance &perf) { return plays.at(perf.GetPlayId()); }
+
     std::string Statement(const Invoice &invoice, const Plays &plays) {
         int total_amount = 0;
         int volume_credits = 0;
@@ -47,7 +49,7 @@ namespace statement {
         };
 
         for (const auto& perf: invoice.GetPerformances()) {
-            const auto &play = plays.at(perf.GetPlayId());
+            const auto &play = PlayFor(plays, perf);
             int this_amount = AmountFor(perf, play);
 
             // add volume credits
