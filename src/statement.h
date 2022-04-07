@@ -55,18 +55,17 @@ namespace statement {
         int total_amount = 0;
         int volume_credits = 0;
         std::string result = "Statement for " + invoice.GetCustomer() + "\n";
-        auto format = Format;
 
         for (const auto& perf: invoice.GetPerformances()) {
             volume_credits += volumeCreditsFor(plays, perf);
 
             // print line for this order
-            result += "  " + PlayFor(plays, perf).GetName() + ": " + format(
+            result += "  " + PlayFor(plays, perf).GetName() + ": " + Format(
                     AmountFor(perf, PlayFor(plays, perf)) / 100) + " (" +
                       std::to_string(perf.GetAudience()) + " seats)\n";
             total_amount += AmountFor(perf, PlayFor(plays, perf));
         }
-        result += "Amount owed is " + format(total_amount / 100) + "\n";
+        result += "Amount owed is " + Format(total_amount / 100) + "\n";
         result += "You earned " + std::to_string(volume_credits) + " credits\n";
         return result;
     }
