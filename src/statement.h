@@ -37,6 +37,13 @@ namespace statement {
 
     const Play &PlayFor(const Plays &plays, const Performance &perf) { return plays.at(perf.GetPlayId()); }
 
+    int volumeCreditsFor(const Plays &plays, const Performance &perf) {
+        int result = std::max(perf.GetAudience() - 30, 0);
+        if (Play::PlayType::COMEDY == PlayFor(plays,
+                                              perf).GetType()) result += floor(perf.GetAudience() / 5);
+        return result;
+    }
+
     std::string Statement(const Invoice &invoice, const Plays &plays) {
         int total_amount = 0;
         int volume_credits = 0;
@@ -49,11 +56,7 @@ namespace statement {
         };
 
         for (const auto& perf: invoice.GetPerformances()) {
-            // add volume credits
-            volume_credits += std::max(perf.GetAudience() - 30, 0);
-            // add extra credit for every ten comedy attendees
-            if (Play::PlayType::COMEDY == PlayFor(plays,
-                                                  perf).GetType()) volume_credits += std::floor(perf.GetAudience() / 5);
+            volume_credits += volumeCreditsFor(plays, perf);
 
             // print line for this order
             result += "  " + PlayFor(plays, perf).GetName() + ": " + format(
