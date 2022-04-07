@@ -68,6 +68,9 @@ namespace statement {
             result += "  " + PlayFor(plays, perf).GetName() + ": " + Usd(
                     AmountFor(perf, PlayFor(plays, perf))) + " (" +
                       std::to_string(perf.GetAudience()) + " seats)\n";
+        }
+
+        for (const auto& perf: invoice.GetPerformances()) {
             total_amount += AmountFor(perf, PlayFor(plays, perf));
         }
 
