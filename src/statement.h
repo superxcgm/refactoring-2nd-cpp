@@ -71,9 +71,8 @@ namespace statement {
             total_amount += AmountFor(perf, PlayFor(plays, perf));
         }
 
-        int volume_credits = TotalVolumeCredits(invoice, plays);
         result += "Amount owed is " + Usd(total_amount) + "\n";
-        result += "You earned " + std::to_string(volume_credits) + " credits\n";
+        result += "You earned " + std::to_string(TotalVolumeCredits(invoice, plays)) + " credits\n";
         return result;
     }
 }
