@@ -44,7 +44,7 @@ namespace statement {
         return result;
     }
 
-    std::string Format(int amount) {
+    std::string Usd(int amount) {
         std::stringstream ss;
         ss.imbue(std::locale("en_US.UTF-8"));
         ss << "$" << std::fixed << std::setprecision(2) << amount;  // $1,234.56
@@ -60,12 +60,12 @@ namespace statement {
             volume_credits += volumeCreditsFor(plays, perf);
 
             // print line for this order
-            result += "  " + PlayFor(plays, perf).GetName() + ": " + Format(
+            result += "  " + PlayFor(plays, perf).GetName() + ": " + Usd(
                     AmountFor(perf, PlayFor(plays, perf)) / 100) + " (" +
                       std::to_string(perf.GetAudience()) + " seats)\n";
             total_amount += AmountFor(perf, PlayFor(plays, perf));
         }
-        result += "Amount owed is " + Format(total_amount / 100) + "\n";
+        result += "Amount owed is " + Usd(total_amount / 100) + "\n";
         result += "You earned " + std::to_string(volume_credits) + " credits\n";
         return result;
     }
