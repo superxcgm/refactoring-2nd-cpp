@@ -89,7 +89,7 @@ namespace statement {
         std::vector<EnrichedPerformance> performances;
     };
 
-    std::string RenderPlainText(const Invoice &invoice, const Plays &plays, const StatementData &data) {
+    std::string RenderPlainText(const Plays &plays, const StatementData &data) {
         std::string result = "Statement for " + data.customer + "\n";
 
         for (const auto &perf: data.performances) {
@@ -119,7 +119,7 @@ namespace statement {
         StatementData statement_data;
         statement_data.customer = invoice.GetCustomer();
         statement_data.performances = EnrichPerformances(invoice, plays);
-        return RenderPlainText(invoice, plays, statement_data);
+        return RenderPlainText(plays, statement_data);
     }
 }
 
