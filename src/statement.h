@@ -51,6 +51,14 @@ namespace statement {
         return ss.str();
     }
 
+    int TotalVolumeCredits(const Invoice &invoice, const Plays &plays) {
+        int result = 0;
+        for (const auto& perf: invoice.GetPerformances()) {
+            result += volumeCreditsFor(plays, perf);
+        }
+        return result;
+    }
+
     std::string Statement(const Invoice &invoice, const Plays &plays) {
         int total_amount = 0;
         std::string result = "Statement for " + invoice.GetCustomer() + "\n";
@@ -63,10 +71,7 @@ namespace statement {
             total_amount += AmountFor(perf, PlayFor(plays, perf));
         }
 
-        int volume_credits = 0;
-        for (const auto& perf: invoice.GetPerformances()) {
-            volume_credits += volumeCreditsFor(plays, perf);
-        }
+        int volume_credits = TotalVolumeCredits(invoice, plays);
         result += "Amount owed is " + Usd(total_amount) + "\n";
         result += "You earned " + std::to_string(volume_credits) + " credits\n";
         return result;
