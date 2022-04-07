@@ -67,7 +67,7 @@ namespace statement {
         return total_amount;
     }
 
-    std::string Statement(const Invoice &invoice, const Plays &plays) {
+    std::string RenderPlainText(const Invoice &invoice, const Plays &plays) {
         std::string result = "Statement for " + invoice.GetCustomer() + "\n";
 
         for (const auto& perf: invoice.GetPerformances()) {
@@ -80,6 +80,10 @@ namespace statement {
         result += "Amount owed is " + Usd(TotalAmount(invoice, plays)) + "\n";
         result += "You earned " + std::to_string(TotalVolumeCredits(invoice, plays)) + " credits\n";
         return result;
+    }
+
+    std::string Statement(const Invoice &invoice, const Plays &plays) {
+        return RenderPlainText(invoice, plays);
     }
 }
 
