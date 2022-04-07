@@ -69,12 +69,13 @@ namespace statement {
 
     struct StatementData {
         std::string customer;
+        std::vector<Performance> performances;
     };
 
     std::string RenderPlainText(const Invoice &invoice, const Plays &plays, const StatementData& data) {
         std::string result = "Statement for " + data.customer + "\n";
 
-        for (const auto& perf: invoice.GetPerformances()) {
+        for (const auto& perf: data.performances) {
             // print line for this order
             result += "  " + PlayFor(plays, perf).GetName() + ": " + Usd(
                     AmountFor(perf, PlayFor(plays, perf))) + " (" +
@@ -89,6 +90,7 @@ namespace statement {
     std::string Statement(const Invoice &invoice, const Plays &plays) {
         StatementData statement_data;
         statement_data.customer = invoice.GetCustomer();
+        statement_data.performances = invoice.GetPerformances();
         return RenderPlainText(invoice, plays, statement_data);
     }
 }
