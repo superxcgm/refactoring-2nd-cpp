@@ -1,0 +1,6 @@
+Statement for BigCo
+  Halmet: $650 (55 seats)
+  As You Like It: $580 (35 seats)
+  Othello: $500 (40 seats)
+Amount owed is $1,730
+You earned 47 credits
