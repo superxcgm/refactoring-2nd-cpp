@@ -1,11 +1,13 @@
 #ifndef SRC_STATEMENT_H_
 #define SRC_STATEMENT_H_
 
+#include <algorithm>
 #include <string>
 #include <sstream>
 #include <iomanip>
 #include <cmath>
 #include <map>
+#include <numeric>
 
 #include "invoice.h"
 #include "play.h"
@@ -69,19 +71,15 @@ namespace statement {
     }
 
     int TotalVolumeCredits(const std::vector<EnrichedPerformance> &performances, const Plays &plays) {
-        int result = 0;
-        for (const auto &perf: performances) {
-            result += volumeCreditsFor(plays, perf);
-        }
-        return result;
+        return std::accumulate(performances.begin(), performances.end(), 0 , [&](int val, const auto &perf) {
+            return val + volumeCreditsFor(plays, perf);
+        });
     }
 
     int TotalAmount(const std::vector<statement::EnrichedPerformance> &performances, const Plays &plays) {
-        int total_amount = 0;
-        for (const auto &perf: performances) {
-            total_amount += AmountFor(perf, perf.GetPlay());
-        }
-        return total_amount;
+        return std::accumulate(performances.begin(), performances.end(), 0, [](int val, const auto &perf) {
+            return val + AmountFor(perf, perf.GetPlay());
+        });
     }
 
     struct StatementData {
