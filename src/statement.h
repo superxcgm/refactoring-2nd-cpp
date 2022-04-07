@@ -60,7 +60,6 @@ namespace statement {
     }
 
     std::string Statement(const Invoice &invoice, const Plays &plays) {
-        int total_amount = 0;
         std::string result = "Statement for " + invoice.GetCustomer() + "\n";
 
         for (const auto& perf: invoice.GetPerformances()) {
@@ -70,6 +69,7 @@ namespace statement {
                       std::to_string(perf.GetAudience()) + " seats)\n";
         }
 
+        int total_amount = 0;
         for (const auto& perf: invoice.GetPerformances()) {
             total_amount += AmountFor(perf, PlayFor(plays, perf));
         }
