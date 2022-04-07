@@ -49,8 +49,6 @@ namespace statement {
         };
 
         for (const auto& perf: invoice.GetPerformances()) {
-            int this_amount = AmountFor(perf, PlayFor(plays, perf));
-
             // add volume credits
             volume_credits += std::max(perf.GetAudience() - 30, 0);
             // add extra credit for every ten comedy attendees
@@ -58,9 +56,10 @@ namespace statement {
                                                   perf).GetType()) volume_credits += std::floor(perf.GetAudience() / 5);
 
             // print line for this order
-            result += "  " + PlayFor(plays, perf).GetName() + ": " + format(this_amount / 100) + " (" +
+            result += "  " + PlayFor(plays, perf).GetName() + ": " + format(
+                    AmountFor(perf, PlayFor(plays, perf)) / 100) + " (" +
                       std::to_string(perf.GetAudience()) + " seats)\n";
-            total_amount += this_amount;
+            total_amount += AmountFor(perf, PlayFor(plays, perf));
         }
         result += "Amount owed is " + format(total_amount / 100) + "\n";
         result += "You earned " + std::to_string(volume_credits) + " credits\n";
