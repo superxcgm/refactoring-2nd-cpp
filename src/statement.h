@@ -88,6 +88,7 @@ namespace statement {
         std::string customer;
         std::vector<EnrichedPerformance> performances;
         int total_amount;
+        int total_volume_credit;
     };
 
     std::string RenderPlainText(const Plays &plays, const StatementData &data) {
@@ -100,7 +101,7 @@ namespace statement {
         }
 
         result += "Amount owed is " + Usd(data.total_amount) + "\n";
-        result += "You earned " + std::to_string(TotalVolumeCredits(data.performances, plays)) + " credits\n";
+        result += "You earned " + std::to_string(data.total_volume_credit) + " credits\n";
         return result;
     }
 
@@ -121,6 +122,7 @@ namespace statement {
         statement_data.customer = invoice.GetCustomer();
         statement_data.performances = EnrichPerformances(invoice, plays);
         statement_data.total_amount = TotalAmount(statement_data.performances, plays);
+        statement_data.total_volume_credit = TotalVolumeCredits(statement_data.performances, plays);
         return RenderPlainText(plays, statement_data);
     }
 }
