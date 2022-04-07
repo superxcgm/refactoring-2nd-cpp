@@ -16,13 +16,18 @@ namespace statement {
 
     class EnrichedPerformance : public Performance {
         Play play;
+        int amount;
     public:
-        EnrichedPerformance(const Performance &perf, const Play &play) : Performance(perf.GetPlayId(),
-                                                                                     perf.GetAudience()),
-                                                                         play(play) {}
+        EnrichedPerformance(const Performance &perf, const Play &play, int amount) : Performance(perf.GetPlayId(),
+                                                                                                 perf.GetAudience()),
+                                                                                     play(play), amount(amount) {}
 
         const Play &GetPlay() const {
             return play;
+        }
+
+        int GetAmount() const {
+            return amount;
         }
     };
 
@@ -89,9 +94,8 @@ namespace statement {
 
         for (const auto &perf: data.performances) {
             // print line for this order
-            result += "  " + perf.GetPlay().GetName() + ": " + Usd(
-                    AmountFor(perf, perf.GetPlay())) + " (" +
-                      std::to_string(perf.GetAudience()) + " seats)\n";
+            result += "  " + perf.GetPlay().GetName() + ": " + Usd(perf.GetAmount()) +
+                      " (" + std::to_string(perf.GetAudience()) + " seats)\n";
         }
 
         result += "Amount owed is " + Usd(TotalAmount(data.performances, plays)) + "\n";
@@ -104,7 +108,8 @@ namespace statement {
         std::vector<EnrichedPerformance> enriched_performances;
         enriched_performances.reserve(origin_performances.size());
         for (const auto &perf: origin_performances) {
-            EnrichedPerformance enriched_performance{perf, PlayFor(plays, perf)};
+            const Play &play = PlayFor(plays, perf);
+            EnrichedPerformance enriched_performance{perf, play, AmountFor(perf, play)};
             enriched_performances.push_back(enriched_performance);
         }
         return enriched_performances;
