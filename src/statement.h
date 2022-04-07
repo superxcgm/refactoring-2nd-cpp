@@ -15,24 +15,24 @@ namespace statement {
     using Plays = std::map<PlayID, Play>;
 
     int AmountFor(const Performance &perf, const Play &play) {
-        int this_amount = 0;
+        int result = 0;
 
         switch (play.GetType()) {
             case Play::PlayType::TRAGEDY:
-                this_amount = 40000;
+                result = 40000;
                 if (perf.GetAudience() > 30) {
-                    this_amount += 1000 * (perf.GetAudience() - 30);
+                    result += 1000 * (perf.GetAudience() - 30);
                 }
                 break;
             case Play::PlayType::COMEDY:
-                this_amount = 30000;
+                result = 30000;
                 if (perf.GetAudience() > 20) {
-                    this_amount += 10000 + 500 * (perf.GetAudience() - 20);
+                    result += 10000 + 500 * (perf.GetAudience() - 20);
                 }
-                this_amount += 300 * perf.GetAudience();
+                result += 300 * perf.GetAudience();
                 break;
         }
-        return this_amount;
+        return result;
     }
 
     std::string Statement(const Invoice &invoice, const Plays &plays) {
