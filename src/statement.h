@@ -14,6 +14,27 @@ namespace statement {
     using PlayID = std::string;
     using Plays = std::map<PlayID, Play>;
 
+    int AmountFor(const Performance &perf, const Play &play) {
+        int this_amount = 0;
+
+        switch (play.GetType()) {
+            case Play::PlayType::TRAGEDY:
+                this_amount = 40000;
+                if (perf.GetAudience() > 30) {
+                    this_amount += 1000 * (perf.GetAudience() - 30);
+                }
+                break;
+            case Play::PlayType::COMEDY:
+                this_amount = 30000;
+                if (perf.GetAudience() > 20) {
+                    this_amount += 10000 + 500 * (perf.GetAudience() - 20);
+                }
+                this_amount += 300 * perf.GetAudience();
+                break;
+        }
+        return this_amount;
+    }
+
     std::string Statement(const Invoice &invoice, const Plays &plays) {
         int total_amount = 0;
         int volume_credits = 0;
@@ -27,23 +48,7 @@ namespace statement {
 
         for (const auto& perf: invoice.GetPerformances()) {
             const auto &play = plays.at(perf.GetPlayId());
-            int this_amount = 0;
-
-            switch (play.GetType()) {
-                case Play::PlayType::TRAGEDY:
-                    this_amount = 40000;
-                    if (perf.GetAudience() > 30) {
-                        this_amount += 1000 * (perf.GetAudience() - 30);
-                    }
-                    break;
-                case Play::PlayType::COMEDY:
-                    this_amount = 30000;
-                    if (perf.GetAudience() > 20) {
-                        this_amount += 10000 + 500 * (perf.GetAudience() - 20);
-                    }
-                    this_amount += 300 * perf.GetAudience();
-                    break;
-            }
+            int this_amount = AmountFor(perf, play);
 
             // add volume credits
             volume_credits += std::max(perf.GetAudience() - 30, 0);
